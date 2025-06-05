@@ -1,0 +1,13 @@
+com/footballvote/dto/MatchRequest.class
+com/footballvote/controller/StadiumController.class
+com/footballvote/config/WebConfig.class
+com/footballvote/controller/VoteController.class
+com/footballvote/domain/Stadium.class
+com/footballvote/domain/Match.class
+com/footballvote/SoccerVoteApplication.class
+com/footballvote/dto/VoteRequest.class
+com/footballvote/domain/Vote.class
+com/footballvote/repository/StadiumRepository.class
+com/footballvote/controller/MatchController.class
+com/footballvote/repository/VoteRepository.class
+com/footballvote/repository/MatchRepository.class

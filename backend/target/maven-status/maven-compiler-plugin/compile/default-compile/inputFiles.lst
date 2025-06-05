@@ -1,0 +1,13 @@
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/controller/StadiumController.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/repository/StadiumRepository.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/dto/MatchRequest.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/repository/MatchRepository.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/domain/Match.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/config/WebConfig.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/controller/MatchController.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/domain/Stadium.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/repository/VoteRepository.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/SoccerVoteApplication.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/domain/Vote.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/dto/VoteRequest.java
+/home/jaekw/cursorProjects/soccer-vote/backend/src/main/java/com/footballvote/controller/VoteController.java

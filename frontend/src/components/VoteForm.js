@@ -17,6 +17,7 @@ const VoteForm = ({ matchId, onVoteSubmitted }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [matchInfo, setMatchInfo] = useState(null);
+    const [votingType, setVotingType] = useState(null); // 'attending' 또는 'notAttending'
 
     useEffect(() => {
         const fetchMatchInfo = async () => {
@@ -39,6 +40,7 @@ const VoteForm = ({ matchId, onVoteSubmitted }) => {
 
         setLoading(true);
         setError('');
+        setVotingType(attending ? 'attending' : 'notAttending');
 
         try {
             await axios.post(`http://localhost:8080/api/matches/${matchId}/votes`, {
@@ -52,6 +54,7 @@ const VoteForm = ({ matchId, onVoteSubmitted }) => {
             setError(error.response?.data || '투표 제출에 실패했습니다.');
         } finally {
             setLoading(false);
+            setVotingType(null);
         }
     };
 
@@ -98,7 +101,9 @@ const VoteForm = ({ matchId, onVoteSubmitted }) => {
                             disabled={loading || isVoteClosed}
                             fullWidth
                         >
-                            {loading ? <CircularProgress size={24} /> : '참석'}
+                            {loading && votingType === 'attending' ? (
+                                <CircularProgress size={24} color="inherit" />
+                            ) : '참석'}
                         </Button>
                         <Button
                             variant="outlined"
@@ -107,7 +112,9 @@ const VoteForm = ({ matchId, onVoteSubmitted }) => {
                             disabled={loading || isVoteClosed}
                             fullWidth
                         >
-                            {loading ? <CircularProgress size={24} /> : '불참'}
+                            {loading && votingType === 'notAttending' ? (
+                                <CircularProgress size={24} color="inherit" />
+                            ) : '불참'}
                         </Button>
                     </Box>
                 </Box>

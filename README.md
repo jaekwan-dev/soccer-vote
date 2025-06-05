@@ -33,8 +33,8 @@ npm start
 ```
 
 ## API 문서
-- H2 콘솔: http://localhost:8080/h2-console
-- API 엔드포인트: http://localhost:8080/api
+- H2 콘솔: https://22de-1-241-160-95.ngrok-free.app/h2-console
+- API 엔드포인트: https://22de-1-241-160-95.ngrok-free.app/api
 
 ## 개발 환경
 - Java 17

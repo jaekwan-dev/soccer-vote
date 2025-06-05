@@ -16,7 +16,11 @@ import {
     Chip,
     CircularProgress,
     Alert,
-    Grid
+    Grid,
+    Divider,
+    List,
+    ListItem,
+    ListItemText
 } from '@mui/material';
 
 const VoteList = ({ matchId, onVoteSubmitted }) => {
@@ -71,11 +75,11 @@ const VoteList = ({ matchId, onVoteSubmitted }) => {
             <CardContent>
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={6}>
-                        <Card variant="outlined">
+                        <Card variant="outlined" sx={{ height: '100%' }}>
                             <CardHeader
                                 title={
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Typography variant="subtitle1">
+                                        <Typography variant="subtitle1" color="primary">
                                             참석
                                         </Typography>
                                         <Chip 
@@ -86,33 +90,36 @@ const VoteList = ({ matchId, onVoteSubmitted }) => {
                                     </Box>
                                 }
                             />
+                            <Divider />
                             <CardContent>
-                                <TableContainer component={Paper} variant="outlined">
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>이름</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {attendingVotes.map((vote) => (
-                                                <TableRow key={vote.id}>
-                                                    <TableCell>{vote.name}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <List dense>
+                                    {attendingVotes.map((vote) => (
+                                        <ListItem key={vote.id}>
+                                            <ListItemText primary={vote.name} />
+                                        </ListItem>
+                                    ))}
+                                    {attendingVotes.length === 0 && (
+                                        <ListItem>
+                                            <ListItemText 
+                                                primary="참석자가 없습니다" 
+                                                primaryTypographyProps={{ 
+                                                    color: 'text.secondary',
+                                                    align: 'center'
+                                                }}
+                                            />
+                                        </ListItem>
+                                    )}
+                                </List>
                             </CardContent>
                         </Card>
                     </Grid>
 
                     <Grid item xs={12} md={6}>
-                        <Card variant="outlined">
+                        <Card variant="outlined" sx={{ height: '100%' }}>
                             <CardHeader
                                 title={
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                        <Typography variant="subtitle1">
+                                        <Typography variant="subtitle1" color="error">
                                             불참
                                         </Typography>
                                         <Chip 
@@ -123,23 +130,26 @@ const VoteList = ({ matchId, onVoteSubmitted }) => {
                                     </Box>
                                 }
                             />
+                            <Divider />
                             <CardContent>
-                                <TableContainer component={Paper} variant="outlined">
-                                    <Table size="small">
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>이름</TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {notAttendingVotes.map((vote) => (
-                                                <TableRow key={vote.id}>
-                                                    <TableCell>{vote.name}</TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                <List dense>
+                                    {notAttendingVotes.map((vote) => (
+                                        <ListItem key={vote.id}>
+                                            <ListItemText primary={vote.name} />
+                                        </ListItem>
+                                    ))}
+                                    {notAttendingVotes.length === 0 && (
+                                        <ListItem>
+                                            <ListItemText 
+                                                primary="불참자가 없습니다" 
+                                                primaryTypographyProps={{ 
+                                                    color: 'text.secondary',
+                                                    align: 'center'
+                                                }}
+                                            />
+                                        </ListItem>
+                                    )}
+                                </List>
                             </CardContent>
                         </Card>
                     </Grid>

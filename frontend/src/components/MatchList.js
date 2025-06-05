@@ -6,28 +6,34 @@ import {
   CardContent,
   CardHeader,
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Button,
   Chip,
   CircularProgress,
-  Alert
+  Alert,
+  Grid,
+  Stack,
+  Divider,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import VoteForm from './VoteForm';
 import VoteList from './VoteList';
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
-const MatchList = ({ onMatchCreated }) => {
+const MatchList = ({ onMatchCreated, isAdmin }) => {
     const [matches, setMatches] = useState([]);
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [voteSubmitted, setVoteSubmitted] = useState(false);
     const [matchVotes, setMatchVotes] = useState({});
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [matchToDelete, setMatchToDelete] = useState(null);
 
     const fetchMatches = async () => {
         try {
@@ -79,6 +85,33 @@ const MatchList = ({ onMatchCreated }) => {
         }
     };
 
+    const handleCardClick = (match) => {
+        setSelectedMatch(selectedMatch?.id === match.id ? null : match);
+    };
+
+    const handleDeleteClick = (event, match) => {
+        event.stopPropagation();
+        setMatchToDelete(match);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleDeleteConfirm = async () => {
+        try {
+            await axios.delete(`http://localhost:8080/api/matches/${matchToDelete.id}`);
+            setDeleteDialogOpen(false);
+            setMatchToDelete(null);
+            fetchMatches();
+        } catch (error) {
+            console.error('경기 삭제에 실패했습니다:', error);
+            setError('경기 삭제에 실패했습니다.');
+        }
+    };
+
+    const handleDeleteCancel = () => {
+        setDeleteDialogOpen(false);
+        setMatchToDelete(null);
+    };
+
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -105,7 +138,7 @@ const MatchList = ({ onMatchCreated }) => {
 
     return (
         <Box sx={{ width: '100%', mb: 4 }}>
-            <Card>
+            <Card sx={{ mb: 4 }}>
                 <CardHeader
                     title={
                         <Typography variant="h5" component="h2">
@@ -114,57 +147,84 @@ const MatchList = ({ onMatchCreated }) => {
                     }
                 />
                 <CardContent>
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>경기장</TableCell>
-                                    <TableCell>경기 일시</TableCell>
-                                    <TableCell>투표 마감 시간</TableCell>
-                                    <TableCell>투표 현황</TableCell>
-                                    <TableCell>투표</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {matches.map((match) => (
-                                    <TableRow key={match.id}>
-                                        <TableCell>{match.stadium}</TableCell>
-                                        <TableCell>
-                                            {new Date(match.matchDate).toLocaleString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            {new Date(match.voteEndTime).toLocaleString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            {matchVotes[match.id] && (
-                                                <Box sx={{ display: 'flex', gap: 1 }}>
-                                                    <Chip
-                                                        label={`참석 ${matchVotes[match.id].attendingCount}명`}
-                                                        color="primary"
-                                                        size="small"
-                                                    />
-                                                    <Chip
-                                                        label={`불참 ${matchVotes[match.id].notAttendingCount}명`}
-                                                        variant="outlined"
-                                                        size="small"
-                                                    />
-                                                </Box>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                onClick={() => setSelectedMatch(match)}
-                                            >
-                                                투표하기
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <Grid container spacing={2}>
+                        {matches.map((match) => (
+                            <Grid item xs={12} key={match.id}>
+                                <Card 
+                                    variant="outlined" 
+                                    sx={{ 
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        ...(selectedMatch?.id === match.id && {
+                                            borderColor: 'primary.main',
+                                            borderWidth: 2
+                                        })
+                                    }}
+                                    onClick={() => handleCardClick(match)}
+                                >
+                                    <CardContent sx={{ p: 2 }}>
+                                        <Box sx={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between', 
+                                            gap: 1 
+                                        }}>
+                                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                <Typography variant="h6" component="div" noWrap>
+                                                    {format(new Date(match.matchDate), 'M/d (E) HH:mm', { locale: ko })}
+                                                </Typography>
+                                                <Typography variant="caption" color="text.secondary" display="block" noWrap>
+                                                    {match.stadium} · 투표마감: {format(new Date(match.voteEndTime), 'M/d HH:mm', { locale: ko })}
+                                                </Typography>
+                                            </Box>
+                                            <Box sx={{ 
+                                                display: 'flex', 
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                flexShrink: 0
+                                            }}>
+                                                {matchVotes[match.id] && (
+                                                    <>
+                                                        <Chip
+                                                            label={`참석 ${matchVotes[match.id].attendingCount}`}
+                                                            color="primary"
+                                                            size="small"
+                                                            sx={{ 
+                                                                height: 24,
+                                                                '& .MuiChip-label': { px: 1 }
+                                                            }}
+                                                        />
+                                                        <Chip
+                                                            label={`불참 ${matchVotes[match.id].notAttendingCount}`}
+                                                            variant="outlined"
+                                                            size="small"
+                                                            sx={{ 
+                                                                height: 24,
+                                                                '& .MuiChip-label': { px: 1 }
+                                                            }}
+                                                        />
+                                                    </>
+                                                )}
+                                                {isAdmin && (
+                                                    <IconButton 
+                                                        size="small" 
+                                                        onClick={(e) => handleDeleteClick(e, match)}
+                                                        sx={{ 
+                                                            flexShrink: 0,
+                                                            ml: 0.5
+                                                        }}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                )}
+                                            </Box>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
                 </CardContent>
             </Card>
 
@@ -174,7 +234,7 @@ const MatchList = ({ onMatchCreated }) => {
                         <CardHeader
                             title={
                                 <Typography variant="h6">
-                                    {selectedMatch.stadium} - {new Date(selectedMatch.matchDate).toLocaleString()}
+                                    {selectedMatch.stadium} - {format(new Date(selectedMatch.matchDate), 'PPP p', { locale: ko })}
                                 </Typography>
                             }
                         />
@@ -193,6 +253,24 @@ const MatchList = ({ onMatchCreated }) => {
                     </Card>
                 </Box>
             )}
+
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={handleDeleteCancel}
+            >
+                <DialogTitle>경기 삭제</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        정말로 이 경기를 삭제하시겠습니까?
+                        <br />
+                        삭제된 경기는 복구할 수 없으며, 관련된 모든 투표도 함께 삭제됩니다.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDeleteCancel}>취소</Button>
+                    <Button onClick={handleDeleteConfirm} color="error">삭제</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };

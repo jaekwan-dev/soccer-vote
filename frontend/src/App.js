@@ -96,9 +96,9 @@ function App() {
             </Box>
           )}
           {showStadiumManager ? (
-            <StadiumManager onBack={() => setShowStadiumManager(false)} />
+            <StadiumManager onBack={handleBackToAdmin} />
           ) : (
-            <MatchList onMatchCreated={matchCreated} />
+            <MatchList onMatchCreated={matchCreated} isAdmin={isAdmin} />
           )}
         </Box>
       </Container>
